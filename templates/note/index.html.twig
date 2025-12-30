@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}All Notes - Internal Notes{% endblock %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>All Notes</h1>
+    </div>
+    <div class="col-md-4 text-right">
+        <a href="{{ path('note_new') }}" class="btn btn-success">
+             Create New Note
+        </a>
+    </div>
+</div>
+
+{% if notes|length > 0 %}
+    <div class="row">
+        {% for note in notes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card note-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ note.title }}</h5>
+                        <p class="card-text text-muted small">
+                             {{ note.createdAt|date('M d, Y - H:i') }}
+                        </p>
+                        <p class="card-text">
+                            {{ note.content|length > 100 ? note.content|slice(0, 100) ~ '...' : note.content }}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="btn-group" role="group">
+                            <a href="{{ path('note_edit', {'id': note.id}) }}" class="btn btn-sm btn-primary">
+                                 Edit
+                            </a>
+                            <form method="post" action="{{ path('note_delete', {'id': note.id}) }}" 
+                                  onsubmit="return confirm('Are you sure you want to delete {{ note.title|e('js') }}?');" 
+                                  style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ note.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                     Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info text-center">
+        <h4>No notes found</h4>
+        <p>Start by creating your first note!</p>
+        <a href="{{ path('note_new') }}" class="btn btn-primary">Create Note</a>
+    </div>
+{% endif %}
+
+{% endblock %}
