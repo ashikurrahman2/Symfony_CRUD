@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * @Route("/notes")
@@ -37,7 +38,9 @@ class NoteController extends AbstractController
         ]);
     }
 
-    //  Create Note
+    /**
+     * @Route("/new", name="note_new", methods={"GET","POST"})
+     */
     public function new(Request $request): Response
     {
         $note = new Note();
@@ -58,7 +61,10 @@ class NoteController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    //  Edit note
+
+    /**
+     * @Route("/{id}/edit", name="note_edit", methods={"GET","POST"})
+     */
     public function edit(Request $request, Note $note): Response
     {
         $form = $this->createForm(NoteType::class, $note);
@@ -77,7 +83,10 @@ class NoteController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    // Delete note
+
+    /**
+     * @Route("/{id}", name="note_delete", methods={"POST"})
+     */
     public function delete(Request $request, Note $note): Response
     {
         if ($this->isCsrfTokenValid('delete'.$note->getId(), $request->request->get('_token'))) {
